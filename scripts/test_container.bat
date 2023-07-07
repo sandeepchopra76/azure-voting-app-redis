@@ -8,7 +8,7 @@ set started=false
 set /a count+=1
 echo [%STAGE_NAME%] Starting container [Attempt: %count%]
 
-powershell -Command "$testStart = Invoke-WebRequest -Uri http://localhost:8000; exit $testStart.StatusCode"
+powershell -Command "$testStart = Invoke-WebRequest -Uri http://localhost:8080; exit $testStart.StatusCode"
 
 if %errorlevel% equ 0 (
     set started=true
