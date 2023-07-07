@@ -1,4 +1,5 @@
 pipeline {
+
     agent any
 
     stages {
@@ -32,5 +33,38 @@ pipeline {
                 bat 'echo %CD%'
             }
         }
+    
+    stage('Start test app') {
+            steps {
+               bat '''
+                    docker-compose up -d
+                    .\\scripts\\test_container.bat
+                '''
+            }
+            post {
+                success {
+                    echo "App started successfully :)"
+                }
+                failure {
+                    echo "App failed to start :("
+                }
+            }
+      }
+    
+    stage('Run Tests') {
+            steps {
+                bat '''
+                    pytest ./tests/test_sample.py
+                '''
+            }
+      }
+    
+    stage('Stop test app') {
+            steps {
+                bat '''
+                    docker-compose down
+                '''
+            }
+      }
     }
 }
