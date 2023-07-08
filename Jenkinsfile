@@ -1,3 +1,5 @@
+@Library('SharedLibrary')_
+
 pipeline {
 
     agent any
@@ -33,38 +35,21 @@ pipeline {
                 bat 'echo %CD%'
             }
         }
-    
-    stage('Start test app') {
-            steps {
-               bat '''
-                    docker-compose up -d
-                    .\\scripts\\test_container.bat
-                '''
+    post {
+        always {
+                createPrometheusMetrics()
             }
-            post {
-                success {
-                    echo "App started successfully :)"
-                }
-                failure {
-                    echo "App failed to start :("
-                }
+
+            // Print WORKSPACE location
+            script {
+                echo "WORKSPACE location: ${env.WORKSPACE}"
             }
-      }
-    
-    stage('Run Tests') {
-            steps {
-                bat '''
-                    pytest ./tests/test_sample.py
-                '''
-            }
-      }
-    
-    stage('Stop test app') {
-            steps {
-                bat '''
-                    docker-compose down
-                '''
-            }
-      }
+
+            // Publish Prometheus metrics
+            prometheus([
+                metricsFile: "${env.WORKSPACE}/prometheus_metrics.txt",
+                port: 8082
+            ])
+        }
     }
 }
