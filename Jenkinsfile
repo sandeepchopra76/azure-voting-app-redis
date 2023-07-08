@@ -41,21 +41,24 @@ pipeline {
     }
 
     post {
-        
         always {
-                PrometheusMetrics()
-            }
-
-        // Print WORKSPACE location
-        script {
-            echo "WORKSPACE location: ${env.WORKSPACE}"
+            // Call the PrometheusMetrics function
+            PrometheusMetrics()
         }
-
-        // Publish Prometheus metrics
-        prometheus([
-            metricsPath: "${env.WORKSPACE}/prometheus_metrics.txt",
-            port: 8082
-        ])
+        success {
+            // Run additional steps when the pipeline is successful
+            script {
+                // Print WORKSPACE location
+                echo "WORKSPACE location: ${env.WORKSPACE}"
+            }
+            
+            // Publish Prometheus metrics
+            prometheus([
+                metricsPath: "${env.WORKSPACE}/prometheus_metrics.txt",
+                port: 8082
+            ])
+        }
+        // Define other conditions and steps as needed
     }
     
 }
