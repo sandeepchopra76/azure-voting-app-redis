@@ -1,4 +1,4 @@
-@Library('SharedLibrary')_
+@Library('SharedLibrary')
 
 pipeline {
 
@@ -37,7 +37,7 @@ pipeline {
         }
     post {
         always {
-                createPrometheusMetrics()
+                PrometheusMetrics()
             }
 
             // Print WORKSPACE location
@@ -47,7 +47,7 @@ pipeline {
 
             // Publish Prometheus metrics
             prometheus([
-                metricsFile: "${env.WORKSPACE}/prometheus_metrics.txt",
+                metricsPath: "${env.WORKSPACE}/prometheus_metrics.txt",
                 port: 8082
             ])
         }
