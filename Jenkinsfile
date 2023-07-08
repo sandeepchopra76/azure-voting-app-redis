@@ -10,8 +10,7 @@ pipeline {
                     def startTime = System.currentTimeMillis()
                     echo "${GIT_BRANCH}"
                     def endTime = System.currentTimeMillis()
-                    def status = currentBuild.result == 'SUCCESS' ? 1 : 0
-                    PrometheusMetrics('Verify Branch', startTime, endTime, status)
+                    PrometheusMetrics('Verify Branch', startTime, endTime, currentBuild.result)
                 }
             }
         }
@@ -27,8 +26,7 @@ pipeline {
                         bat 'docker images -a'
                     }
                     def endTime = System.currentTimeMillis()
-                    def status = currentBuild.result == 'SUCCESS' ? 1 : 0
-                    PrometheusMetrics('Build Docker Image', startTime, endTime, status)
+                    PrometheusMetrics('Build Docker Image', startTime, endTime, currentBuild.result)
                 }
             }
         }
