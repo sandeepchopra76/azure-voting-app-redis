@@ -39,5 +39,23 @@ pipeline {
             }
         }
     }
+
+    post {
+        
+        always {
+                PrometheusMetrics()
+            }
+
+        // Print WORKSPACE location
+        script {
+            echo "WORKSPACE location: ${env.WORKSPACE}"
+        }
+
+        // Publish Prometheus metrics
+        prometheus([
+            metricsPath: "${env.WORKSPACE}/prometheus_metrics.txt",
+            port: 8082
+        ])
+    }
     
 }
