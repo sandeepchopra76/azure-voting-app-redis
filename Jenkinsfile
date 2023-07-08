@@ -13,9 +13,10 @@ pipeline {
             }
              pre {
                 script {
-                    def startTime = currentBuild.startTimeMillis ?: System.currentTimeMillis()
+                    def startTime = System.currentTimeMillis()
                     env.START_TIME = startTime
                 }
+             }
             post {
                 always {
                     PrometheusMetrics('Verify Branch', env.START_TIME.toLong(), System.currentTimeMillis(), currentBuild.currentResult)
@@ -49,9 +50,10 @@ pipeline {
             }
             pre {
                 script {
-                    def startTime = currentBuild.startTimeMillis ?: System.currentTimeMillis()
+                    def startTime = System.currentTimeMillis()
                     env.START_TIME = startTime
                 }
+            }
              post {
                 always {
                     PrometheusMetrics('Build Docker Image', env.START_TIME.toLong(), System.currentTimeMillis(), currentBuild.currentResult)
