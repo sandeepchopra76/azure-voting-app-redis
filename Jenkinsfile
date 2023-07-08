@@ -5,6 +5,7 @@ pipeline {
     agent any
 
     stages {
+        
         stage('Verify Branch') {
             steps {
                 echo "${GIT_BRANCH}"
@@ -12,6 +13,7 @@ pipeline {
         }
     
     stage('Build Docker Image') {
+            
             steps {
 
                 bat 'echo %CD%'
@@ -32,10 +34,13 @@ pipeline {
 
                 }
 
-                bat 'echo %CD%'
+                 bat 'echo %CD%'
             }
         }
+    }
+    
     post {
+        
         always {
                 PrometheusMetrics()
             }
@@ -51,5 +56,4 @@ pipeline {
                 port: 8082
             ])
         }
-    }
 }
