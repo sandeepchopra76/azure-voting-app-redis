@@ -17,7 +17,7 @@ pipeline {
                 echo "${GIT_BRANCH}"
 
                 script {
-                    PrometheusMetrics('Verify Branch', env.START_TIME.toLong(), System.currentTimeMillis(), step([$class: 'BuildResultStep']).result.toString())
+                    PrometheusMetrics('Verify Branch', env.START_TIME.toLong(), System.currentTimeMillis(), currentBuild.result.toString())
                 }
             }
         }
@@ -47,7 +47,7 @@ pipeline {
                 }
 
                 script {
-                    PrometheusMetrics('Build Docker Image', env.START_TIME.toLong(), System.currentTimeMillis(), step([$class: 'BuildResultStep']).result.toString())
+                    PrometheusMetrics('Build Docker Image', env.START_TIME.toLong(), System.currentTimeMillis(), currentBuild.result.toString())
                 }
             }
             
