@@ -7,10 +7,15 @@ pipeline {
         stage('Verify Branch') {
             steps {
                 script {
-                    def startTime = System.currentTimeMillis()
+                    env.STAGE_START_TIME = System.currentTimeMillis().toString()
                     echo "${GIT_BRANCH}"
-                    def endTime = System.currentTimeMillis()
-                    PrometheusMetrics('Verify Branch', startTime, endTime, currentBuild.result)
+                }
+            }
+            post {
+                always {
+                    script {
+                        PrometheusMetrics('Verify Branch', env.STAGE_START_TIME.toLong(), System.currentTimeMillis(), currentBuild.currentResult)
+                    }
                 }
             }
         }
@@ -18,15 +23,20 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    def startTime = System.currentTimeMillis()
+                    env.STAGE_START_TIME = System.currentTimeMillis().toString()
                     dir('azure-vote') {
                         bat 'echo %CD%'
                         bat 'docker images -a'
                         bat 'docker build -t jenkins-pipeline .'
                         bat 'docker images -a'
                     }
-                    def endTime = System.currentTimeMillis()
-                    PrometheusMetrics('Build Docker Image', startTime, endTime, currentBuild.result)
+                }
+            }
+            post {
+                always {
+                    script {
+                        PrometheusMetrics('Build Docker Image', env.STAGE_START_TIME.toLong(), System.currentTimeMillis(), currentBuild.currentResult)
+                    }
                 }
             }
         }
