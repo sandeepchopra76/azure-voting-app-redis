@@ -11,9 +11,14 @@ pipeline {
             steps {
                 echo "${GIT_BRANCH}"
             }
+             pre {
+                script {
+                    def startTime = currentBuild.startTimeMillis ?: System.currentTimeMillis()
+                    env.START_TIME = startTime
+                }
             post {
                 always {
-                    PrometheusMetrics('Verify Branch', env.startTimeMillis, System.currentTimeMillis(), currentBuild.currentResult)
+                    PrometheusMetrics('Verify Branch', env.START_TIME.toLong(), System.currentTimeMillis(), currentBuild.currentResult)
                 }
             }
         }
@@ -42,9 +47,14 @@ pipeline {
 
                  bat 'echo %CD%'
             }
+            pre {
+                script {
+                    def startTime = currentBuild.startTimeMillis ?: System.currentTimeMillis()
+                    env.START_TIME = startTime
+                }
              post {
                 always {
-                    PrometheusMetrics('Build Docker Image', env.startTimeMillis, System.currentTimeMillis(), currentBuild.currentResult)
+                    PrometheusMetrics('Build Docker Image', env.START_TIME.toLong(), System.currentTimeMillis(), currentBuild.currentResult)
                 }
             }
         }
