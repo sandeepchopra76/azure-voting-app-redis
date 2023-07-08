@@ -11,6 +11,11 @@ pipeline {
             steps {
                 echo "${GIT_BRANCH}"
             }
+            post {
+                always {
+                    PrometheusMetrics('Verify Branch', env.startTimeMillis, System.currentTimeMillis(), currentBuild.currentResult)
+                }
+            }
         }
     
     stage('Build Docker Image') {
@@ -37,28 +42,11 @@ pipeline {
 
                  bat 'echo %CD%'
             }
-        }
-    }
-
-    post {
-        always {
-            // Call the PrometheusMetrics function
-            PrometheusMetrics()
-        }
-        success {
-            // Run additional steps when the pipeline is successful
-            script {
-                // Print WORKSPACE location
-                echo "WORKSPACE location: ${env.WORKSPACE}"
+             post {
+                always {
+                    PrometheusMetrics('Build Docker Image', env.startTimeMillis, System.currentTimeMillis(), currentBuild.currentResult)
+                }
             }
-            
-            // Publish Prometheus metrics
-            prometheus([
-                metricsPath: "${env.WORKSPACE}/prometheus_metrics.txt",
-                port: 8082
-            ])
         }
-        // Define other conditions and steps as needed
     }
-    
 }
