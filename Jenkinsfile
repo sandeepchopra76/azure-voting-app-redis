@@ -9,16 +9,14 @@ pipeline {
         
         stage('Verify Branch') {
             steps {
-                echo "${GIT_BRANCH}"
-            }
-             pre {
+
                 script {
-                    def startTime = System.currentTimeMillis()
-                    env.START_TIME = startTime
+                    env.START_TIME = System.currentTimeMillis()
                 }
-             }
-            post {
-                always {
+
+                echo "${GIT_BRANCH}"
+
+                script {
                     PrometheusMetrics('Verify Branch', env.START_TIME.toLong(), System.currentTimeMillis(), currentBuild.currentResult)
                 }
             }
@@ -28,7 +26,9 @@ pipeline {
             
             steps {
 
-                bat 'echo %CD%'
+                script {
+                    env.START_TIME = System.currentTimeMillis()
+                }
                 
                 // Change to subdirectory
                 dir('azure-vote') {
@@ -46,19 +46,11 @@ pipeline {
 
                 }
 
-                 bat 'echo %CD%'
-            }
-            pre {
                 script {
-                    def startTime = System.currentTimeMillis()
-                    env.START_TIME = startTime
-                }
-            }
-             post {
-                always {
                     PrometheusMetrics('Build Docker Image', env.START_TIME.toLong(), System.currentTimeMillis(), currentBuild.currentResult)
                 }
             }
+            
         }
     }
 }
